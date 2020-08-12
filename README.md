@@ -15,8 +15,7 @@ With 3 rings, the puzzle can be solved in 7 moves. The minimal number of moves r
 [Read more on Tower of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hanoi)
 
 ### Algorithm
-To solve the puzzle the UI has a algorithm built in. The algorithm is an iterative one and is based of [this](https://en.wikipedia.org/wiki/Tower_of_Hanoi#Iterative_solution).
-![Algorithm flow chart](/res/flowChart.jpg)
+To solve the puzzle the UI has two algorithms built in. One of them is [iterative](https://en.wikipedia.org/wiki/Tower_of_Hanoi#Iterative_solution) and the other is [recursive](https://en.wikipedia.org/wiki/Tower_of_Hanoi#Recursive_solution).
 
 ### Built With
 * [Java 11](https://www.java.com/en/)
