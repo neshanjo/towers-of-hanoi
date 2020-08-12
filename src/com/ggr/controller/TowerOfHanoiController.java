@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +31,9 @@ public class TowerOfHanoiController {
 
 	@FXML
 	private Canvas canvasRight;
+
+	@FXML
+	private CheckBox recursiveCheckbox;
 
 	private long moveCounter = 0;
 	private int amountOfRings = 0;
@@ -121,18 +125,48 @@ public class TowerOfHanoiController {
 
 	@FXML
 	private void solveHandler(ActionEvent event) {
-		// Even
-		if (amountOfRings % 2 == 0) {
-			solveEvenTower();
-		}
-		// Uneven
-		else {
-			solveUnevenTower();
+		if (!recursiveCheckbox.isSelected()) {
+			// Even
+			if (amountOfRings % 2 == 0) {
+				solveEvenTower();
+			}
+			// Uneven
+			else {
+				solveUnevenTower();
+			}
+		} else {
+			solveRecursive();
 		}
 	}
 
 	// Algorithms
-	
+
+	private void solveRecursive() {
+		moveTower(amountOfRings, leftTower, rightTower);
+		removeAllTowers();
+		drawAllTowers();
+	}
+
+	private void moveTower(int numberOfRings, ArrayList<Ring> source, ArrayList<Ring> dest) {
+		if (numberOfRings > 0) {
+			moveTower(numberOfRings - 1, source, getFreeTower(source, dest));
+			moveRing(source, dest);
+			increaseMoveCounter();
+			moveTower(numberOfRings - 1, getFreeTower(source, dest), dest);
+		}
+	}
+
+	private ArrayList<Ring> getFreeTower(ArrayList<Ring> source, ArrayList<Ring> dest) {
+		if (source == leftTower && dest == midTower || dest == leftTower && source == midTower)
+			return rightTower;
+		if (source == midTower && dest == rightTower || dest == midTower && source == rightTower)
+			return leftTower;
+		if (source == leftTower && dest == rightTower || dest == leftTower && source == rightTower)
+			return midTower;
+		System.out.println("Couldn't find free tower");
+		return null;
+	}
+
 	private void solveEvenTower() {
 		boolean solved = false;
 		while (!solved) {
@@ -209,7 +243,7 @@ public class TowerOfHanoiController {
 		removeAllTowers();
 		drawAllTowers();
 	}
-	
+
 	// Util Functions
 
 	private boolean isLegalMove(ArrayList<Ring> source, ArrayList<Ring> dest) {
@@ -238,7 +272,6 @@ public class TowerOfHanoiController {
 		}
 		return false;
 	}
-	
 
 	private void increaseMoveCounter() {
 		movesLabel.setText(String.valueOf(++moveCounter));
@@ -260,16 +293,16 @@ public class TowerOfHanoiController {
 		midTower.clear();
 		rightTower.clear();
 	}
-	
+
 	private void copyArrayList(ArrayList<Ring> dest, ArrayList<Ring> source) {
 		dest.clear();
 		for (int i = 0; i < source.size(); i++) {
 			dest.add(new Ring(source.get(i)));
 		}
 	}
-	
+
 	// Draw and clear Functions
-	
+
 	private void drawBase() {
 		gcLeft.setFill(Color.BLACK);
 		gcLeft.fillRect(0, 505, 300, 10);
