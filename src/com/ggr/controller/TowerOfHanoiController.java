@@ -324,19 +324,22 @@ public class TowerOfHanoiController {
 		}
 	}
 
+	private static final double MARGIN = 1.0;
+
 	private void drawRing(double width, double height, double offset, int order, String tower) {
 		switch (tower) {
 		case "left":
-			gcLeft.setStroke(Color.RED);
-			gcLeft.strokeRect(offset, (order * height - height), width, height);
+			// darker red
+			gcLeft.setFill(Color.rgb(204, 51, 0));
+			gcLeft.fillRect(offset + MARGIN, (order * height - height) + MARGIN, width - MARGIN, height - MARGIN);
 			break;
 		case "mid":
-			gcMid.setStroke(Color.ORANGE);
-			gcMid.strokeRect(offset, (order * height - height), width, height);
+			gcMid.setFill(Color.ORANGE);
+			gcMid.fillRect(offset + MARGIN, (order * height - height) + MARGIN, width - MARGIN, height - MARGIN);
 			break;
 		case "right":
-			gcRight.setStroke(Color.GREEN);
-			gcRight.strokeRect(offset, (order * height - height), width, height);
+			gcRight.setFill(Color.GREEN);
+			gcRight.fillRect(offset + MARGIN, (order * height - height) + MARGIN, width - MARGIN, height - MARGIN);
 			break;
 		default:
 			System.out.println("incorrect tower was passed");
