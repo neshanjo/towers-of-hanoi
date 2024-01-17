@@ -1,9 +1,8 @@
-## Table of Contents
+# towers-of-hanoi
 
-* [About the Project](#about-the-project)
-  * [Algorithm](#algorithm)
-  * [Built With](#built-with)
-* [License](#license)
+forked from [LuciferUchiha/Tower-of-Hanoi](https://github.com/LuciferUchiha/Tower-of-Hanoi). Made this a maven project and tweaked some small things (see commit history).
+
+**Original project information follows:**
 
 ## About The Project
 
