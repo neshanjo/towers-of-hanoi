@@ -36,7 +36,7 @@
             <Insets bottom="10.0" left="10.0" top="10.0" />
          </GridPane.margin>
       </Label>
-      <TextField fx:id="sizeInput" GridPane.rowIndex="1">
+      <TextField fx:id="sizeInput" GridPane.rowIndex="1" onAction="#createHandler">
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
