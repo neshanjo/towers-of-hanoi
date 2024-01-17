@@ -15,6 +15,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.Animation;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Duration;
 
 public class TowerOfHanoiController {
 	@FXML
@@ -77,13 +84,16 @@ public class TowerOfHanoiController {
 		copyArrayList(startSituation, leftTower);
 	}
 
-	@FXML
-	private void resetHandler(ActionEvent event) {
-		resetMoveCounter();
-		resetTowers();
-		removeAllTowers();
-		drawAllTowers();
-	}
+    @FXML
+    private void resetHandler(ActionEvent event) {
+        resetMoveCounter();
+        resetTowers();
+        removeAllTowers();
+        drawAllTowers();
+        if (animationTimeline != null) {
+            animationTimeline.stop();
+        }
+    }
 
 	@FXML
 	private void leftHandler(MouseEvent event) {
@@ -106,25 +116,29 @@ public class TowerOfHanoiController {
 		drawAllTowers();
 	}
 
-	private void pickUpOrPlaceRing(ArrayList<Ring> tower) {
-		if (inHand && (tower.isEmpty() || ringInHand.getWidth() <= tower.get(tower.size() - 1).getWidth())) {
-			ringInHand.setOrder(amountOfRings - tower.size());
-			tower.add(ringInHand);
-			inHand = false;
-			increaseMoveCounter();
-		} else if (!inHand) {
-			ringInHand = tower.get(tower.size() - 1);
-			tower.remove(ringInHand);
-			inHand = true;
-		}
-		// Game over
-		if (isGameOver()) {
-			MainApp.showGameOver(new Stage(), moveCounter);
-		}
-	}
+    private void pickUpOrPlaceRing(ArrayList<Ring> tower) {
+        if (inHand && (tower.isEmpty() || ringInHand.getWidth() <= tower.get(tower.size() - 1).getWidth())) {
+            ringInHand.setOrder(amountOfRings - tower.size());
+            tower.add(ringInHand);
+            inHand = false;
+            moveRingAnimated(leftTower, leftTower); // This is just to trigger the animation without moving the ring
+        } else if (!inHand) {
+            ringInHand = tower.get(tower.size() - 1);
+            tower.remove(ringInHand);
+            inHand = true;
+        }
+        // Game over
+        if (isGameOver()) {
+            MainApp.showGameOver(new Stage(), moveCounter);
+        }
+    }
 
-	@FXML
+
+    @FXML
 	private void solveHandler(ActionEvent event) {
+        if (animationTimeline != null) {
+            animationTimeline.stop();
+        }
 		if (!recursiveCheckbox.isSelected()) {
 			// Even
 			if (amountOfRings % 2 == 0) {
@@ -260,10 +274,7 @@ public class TowerOfHanoiController {
 	}
 
 	private void moveRing(ArrayList<Ring> source, ArrayList<Ring> dest) {
-		Ring temp = source.get(source.size() - 1);
-		temp.setOrder(amountOfRings - dest.size());
-		source.remove(temp);
-		dest.add(temp);
+	    moveRingAnimated(source,dest);
 	}
 
 	private boolean isGameOver() {
@@ -369,4 +380,48 @@ public class TowerOfHanoiController {
 			break;
 		}
 	}
+
+	private Timeline animationTimeline;
+
+	private void moveRingAnimated(ArrayList<Ring> source, ArrayList<Ring> dest) {
+		Ring temp = source.get(source.size() - 1);
+		temp.setOrder(amountOfRings - dest.size());
+
+		double initialX = source == leftTower ? 0 : (source == midTower ? 300 : 600);
+		double finalX = dest == leftTower ? 0 : (dest == midTower ? 300 : 600);
+
+		double initialY = source.size() * temp.getHeight() - temp.getHeight();
+		double finalY = dest.size() * temp.getHeight() - temp.getHeight();
+
+		// Create a KeyValue for x and y properties
+		KeyValue keyValueX = new KeyValue(temp.widthProperty(), finalX - initialX);
+		KeyValue keyValueY = new KeyValue(temp.heightProperty(), finalY - initialY);
+
+		// Create a KeyFrame with a duration of 1 second
+		KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), keyValueX, keyValueY);
+
+		// Create a Timeline with the KeyFrame
+		animationTimeline = new Timeline(keyFrame);
+
+		// Set up an event handler to update the Tower state after the animation
+		EventHandler<ActionEvent> onFinished = event -> {
+			source.remove(temp);
+			dest.add(temp);
+			removeAllTowers();
+			drawAllTowers();
+			increaseMoveCounter();
+			// Check for game over after each move
+			if (isGameOver()) {
+				MainApp.showGameOver(new Stage(), moveCounter);
+				animationTimeline.stop(); // Stop the animation when the game is over
+			}
+		};
+
+		// Set the event handler to be called when the animation finishes
+		animationTimeline.setOnFinished(onFinished);
+
+		// Play the animation
+		animationTimeline.play();
+	}
+
 }

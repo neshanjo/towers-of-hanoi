@@ -1,14 +1,18 @@
 package com.ggr.model;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleDoubleProperty;
+
 public class Ring {
-	private double width;
-	private double height;
+	private DoubleProperty width;
+	private DoubleProperty height;
 	private double leftOffset;
 	private int order;
 
 	public Ring(double height, double width, double leftOffset, int order) {
-		this.height = height;
-		this.width = width;
+		this.height = new SimpleDoubleProperty(height);
+		this.width = new SimpleDoubleProperty(width);
 		this.leftOffset = leftOffset;
 		this.order = order;
 	}
@@ -26,19 +30,19 @@ public class Ring {
 	}
 
 	public double getWidth() {
-		return width;
+		return width.get();
 	}
 
 	public void setWidth(double width) {
-		this.width = width;
+		this.width.set(width);
 	}
 
 	public double getHeight() {
-		return height;
+		return height.get();
 	}
 
 	public void setHeight(double height) {
-		this.height = height;
+		this.height.set(height);
 	}
 
 	public double getLeftOffset() {
@@ -55,5 +59,13 @@ public class Ring {
 
 	public void setOrder(int order) {
 		this.order = order;
+	}
+
+	public DoubleProperty widthProperty() {
+		return width;
+	}
+
+	public DoubleProperty heightProperty() {
+		return height;
 	}
 }
